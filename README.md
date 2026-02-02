@@ -1,2 +1,0 @@
-# Ethio E-commerce website
-
