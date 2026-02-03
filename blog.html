@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Blog - EthioShop</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="container mt-4">
+  <h2>EthioShop Blog</h2>
+  <p class="text-muted">Latest news and insights about Ethiopian products</p>
+  
+  <div class="row mt-4">
+    <div class="col-md-8">
+      <div class="card mb-4">
+        <img src="assets/images/coffee-set.avif" 
+             class="card-img-top" alt="Ethiopian Coffee" height="300">
+        <div class="card-body">
+          <h5 class="card-title">The Art of Ethiopian Coffee Ceremony</h5>
+          <p class="card-text">Discover the traditional Ethiopian coffee ceremony and learn how to prepare authentic Ethiopian coffee at home. The coffee ceremony is a central part of Ethiopian social and cultural life.</p>
+          <a href="https://en.wikipedia.org/wiki/Coffee_ceremony" target="_blank" class="btn btn-outline-primary">Read More →</a>
+        </div>
+        <div class="card-footer text-muted">
+          Posted on March 15, 2026
+        </div>
+      </div>
+      
+      <div class="card mb-4">
+        <img src="assets/images/habesha-kemis.avif" 
+             class="card-img-top" alt="Habesha Dress" height="300">
+        <div class="card-body">
+          <h5 class="card-title">Traditional Ethiopian Clothing Guide</h5>
+          <p class="card-text">Learn about the beautiful traditional clothing of Ethiopia, from Habesha Kemis to Netela shawls. Discover the symbolism and craftsmanship behind these cultural garments.</p>
+          <a href="https://en.wikipedia.org/wiki/Culture_of_Ethiopia" target="_blank" class="btn btn-outline-primary">Read More →</a>
+        </div>
+        <div class="card-footer text-muted">
+          Posted on March 10, 2026
+        </div>
+      </div>
+      
+      <div class="card mb-4">
+        <img src="assets/images/spices.avif" 
+             class="card-img-top" alt="Ethiopian Spices" height="300">
+        <div class="card-body">
+          <h5 class="card-title">Essential Ethiopian Spices for Your Kitchen</h5>
+          <p class="card-text">Explore the essential spices used in Ethiopian cuisine, including Berbere, Mitmita, and Awaze. Learn how to use these spices to create authentic Ethiopian flavors.</p>
+          <a href="https://en.wikipedia.org/wiki/Ethiopian_cuisine" target="_blank" class="btn btn-outline-primary">Read More →</a>
+        </div>
+        <div class="card-footer text-muted">
+          Posted on March 5, 2026
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-4">
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Subscribe to Newsletter</h5>
+          <p class="card-text">Get the latest updates on Ethiopian products, special offers, and blog posts delivered to your inbox.</p>
+          <div class="mb-3">
+            <input type="email" id="newsletterEmail" class="form-control" placeholder="Your email address">
+          </div>
+          <div class="mb-3">
+            <input type="text" id="newsletterName" class="form-control" placeholder="Your name">
+          </div>
+          <button onclick="subscribeNewsletter()" class="btn btn-dark w-100">Subscribe Now</button>
+          <p class="small text-muted mt-2">We respect your privacy. Unsubscribe at any time.</p>
+        </div>
+      </div>
+      
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Popular Categories</h5>
+          <div class="d-flex flex-wrap gap-2">
+            <a href="products.html?category=food" class="badge bg-primary text-decoration-none">Coffee & Tea</a>
+            <a href="products.html?category=clothing" class="badge bg-success text-decoration-none">Traditional Wear</a>
+            <a href="products.html?category=home" class="badge bg-info text-decoration-none">Home Decor</a>
+            <a href="products.html?category=jewelry" class="badge bg-warning text-decoration-none">Jewelry</a>
+            <a href="products.html?category=food" class="badge bg-danger text-decoration-none">Spices</a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Recent Posts</h5>
+          <ul class="list-unstyled">
+            <li class="mb-2"><a href="#" class="text-decoration-none"><i class="bi bi-chevron-right me-1"></i>Ethiopian Spices Guide</a></li>
+            <li class="mb-2"><a href="#" class="text-decoration-none"><i class="bi bi-chevron-right me-1"></i>Sustainable Shopping in 2026</a></li>
+            <li class="mb-2"><a href="#" class="text-decoration-none"><i class="bi bi-chevron-right me-1"></i>Local Artisans Spotlight</a></li>
+            <li class="mb-2"><a href="#" class="text-decoration-none"><i class="bi bi-chevron-right me-1"></i>Ethiopian Holiday Gift Guide</a></li>
+            <li class="mb-2"><a href="#" class="text-decoration-none"><i class="bi bi-chevron-right me-1"></i>Traditional vs Modern Home Decor</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/ui.js"></script>
+<script>
+function subscribeNewsletter() {
+  const email = document.getElementById('newsletterEmail').value;
+  const name = document.getElementById('newsletterName').value;
+  
+  if (!email || !email.includes('@')) {
+    alert('Please enter a valid email address');
+    return;
+  }
+  
+  if (!name) {
+    alert('Please enter your name');
+    return;
+  }
+  
+  let subscribers = JSON.parse(localStorage.getItem('newsletterSubscribers')) || [];
+  
+  // Check if already subscribed
+  if (subscribers.some(sub => sub.email === email)) {
+    alert('You are already subscribed to our newsletter!');
+    return;
+  }
+  
+  const newSubscriber = {
+    email: email,
+    name: name,
+    subscribedDate: '2026-03-25',
+    active: true
+  };
+  
+  subscribers.push(newSubscriber);
+  localStorage.setItem('newsletterSubscribers', JSON.stringify(subscribers));
+  
+  // Add to recent activities
+  let activities = JSON.parse(localStorage.getItem('recentActivities')) || [];
+  activities.unshift({
+    id: Date.now(),
+    type: 'newsletter_subscription',
+    message: `New newsletter subscriber: ${name} (${email})`,
+    timestamp: new Date().toISOString()
+  });
+  localStorage.setItem('recentActivities', JSON.stringify(activities));
+  
+  alert(`Thank you ${name} for subscribing to our newsletter! You'll receive our next update soon.`);
+  
+  // Clear form
+  document.getElementById('newsletterEmail').value = '';
+  document.getElementById('newsletterName').value = '';
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

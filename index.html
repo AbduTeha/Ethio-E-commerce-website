@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>EthioShop - Home</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="container mt-4">
+  <h2>Welcome to EthioShop</h2>
+  <p class="lead">Discover authentic Ethiopian products delivered to your doorstep</p>
+  
+  <!-- Featured Products -->
+  <div class="row mt-4">
+    <div class="col-md-4 mb-4">
+      <div class="card h-100">
+        <img src="assets/images/coffee.avif" 
+             class="card-img-top" alt="Coffee" height="250">
+        <div class="card-body">
+          <h5>Premium Coffee</h5>
+          <p>Fresh Ethiopian coffee beans from Yirgacheffe and Sidamo regions</p>
+          <a href="products.html?category=food" class="btn btn-outline-dark">Shop Coffee</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-4">
+      <div class="card h-100">
+        <img src="assets/images/habesha-kemis.avif" 
+             class="card-img-top" alt="Clothing" height="250">
+        <div class="card-body">
+          <h5>Traditional Clothing</h5>
+          <p>Beautiful Habesha dresses and accessories handcrafted by local artisans</p>
+          <a href="products.html?category=clothing" class="btn btn-outline-dark">Shop Clothing</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-4">
+      <div class="card h-100">
+        <img src="assets/images/honey.avif" 
+             class="card-img-top" alt="Honey" height="250">
+        <div class="card-body">
+          <h5>Organic Honey</h5>
+          <p>Pure Ethiopian honey from different regions of the country</p>
+          <a href="products.html?category=food" class="btn btn-outline-dark">Shop Honey</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <h3 class="mt-5">Latest Products</h3>
+  <div class="row" id="product-list"></div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/buyer.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

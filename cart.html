@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Cart - EthioShop</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .cart-item-image {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 5px;
+    }
+    .quantity-btn {
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+  <script src="js/ui.js"></script>
+  
+  <div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2><i class="bi bi-cart3 me-2"></i>My Shopping Cart</h2>
+      <a href="products.html" class="btn btn-outline-dark">
+        <i class="bi bi-arrow-left me-1"></i> Continue Shopping
+      </a>
+    </div>
+    
+    <div class="row">
+      <div class="col-lg-8">
+        <div id="cart-items">
+          <!-- Cart items will be loaded here -->
+        </div>
+        
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title">Delivery Information</h5>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Full Name</label>
+                <input type="text" id="deliveryName" class="form-control" placeholder="Enter your name">
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Phone Number</label>
+                <input type="tel" id="deliveryPhone" class="form-control" placeholder="+251 ___ ___ ___">
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Delivery Address</label>
+              <textarea id="deliveryAddress" class="form-control" rows="3" placeholder="Enter your complete address"></textarea>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">City</label>
+              <select id="deliveryCity" class="form-select">
+                <option value="addis">Addis Ababa</option>
+                <option value="bahirdar">Bahir Dar</option>
+                <option value="hawassa">Hawassa</option>
+                <option value="mekelle">Mekelle</option>
+                <option value="dire">Dire Dawa</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-4">
+        <div class="card sticky-top" style="top: 20px;">
+          <div class="card-body">
+            <h5 class="card-title mb-4">Order Summary</h5>
+            
+            <div class="d-flex justify-content-between mb-2">
+              <span>Subtotal</span>
+              <span id="subtotal">ETB 0</span>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+              <span>Shipping</span>
+              <span id="shipping">ETB 50</span>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+              <span>Tax (15%)</span>
+              <span id="tax">ETB 0</span>
+            </div>
+            <hr>
+            <div class="d-flex justify-content-between mb-4">
+              <h5>Total</h5>
+              <h5 id="cart-total">ETB 0</h5>
+            </div>
+            
+            <button onclick="checkout()" class="btn btn-success w-100 btn-lg mb-3">
+              <i class="bi bi-bag-check me-2"></i> Proceed to Checkout
+            </button>
+            
+            <div class="text-center">
+              <img src="https://cdn-icons-png.flaticon.com/512/179/179457.png" alt="Visa" height="30" class="me-2">
+              <img src="https://cdn-icons-png.flaticon.com/512/179/179457.png" alt="MasterCard" height="30" class="me-2">
+              <img src="https://cdn-icons-png.flaticon.com/512/825/825454.png" alt="COD" height="30">
+              <p class="small text-muted mt-2">We accept cash on delivery</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card mt-4">
+          <div class="card-body">
+            <h6><i class="bi bi-shield-check text-success me-2"></i>Secure Checkout</h6>
+            <p class="small text-muted mb-2">Your payment information is secure and encrypted.</p>
+            
+            <h6><i class="bi bi-truck text-primary me-2"></i>Free Shipping</h6>
+            <p class="small text-muted mb-2">Free delivery on orders over ETB 1000.</p>
+            
+            <h6><i class="bi bi-arrow-counterclockwise text-warning me-2"></i>Easy Returns</h6>
+            <p class="small text-muted">30-day return policy for all products.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      loadCartItems();
+      
+      // Load user info if available
+      const user = JSON.parse(localStorage.getItem('currentUser'));
+      if (user) {
+        document.getElementById('deliveryName').value = user.name || '';
+        document.getElementById('deliveryPhone').value = user.phone || '';
+        document.getElementById('deliveryAddress').value = user.address || '';
+      }
+    });
+    
+    function loadCartItems() {
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const container = document.getElementById('cart-items');
+      
+      if (cart.length === 0) {
+        container.innerHTML = `
+          <div class="alert alert-info text-center py-5">
+            <i class="bi bi-cart-x display-4 text-muted mb-3"></i>
+            <h4>Your cart is empty</h4>
+            <p>Add some amazing Ethiopian products to get started!</p>
+            <a href="products.html" class="btn btn-primary mt-2">
+              <i class="bi bi-bag me-1"></i> Browse Products
+            </a>
+          </div>
+        `;
+        updateOrderSummary(0);
+        return;
+      }
+      
+      let html = '';
+      cart.forEach((item, index) => {
+        const itemTotal = item.price * item.quantity;
+        
+        html += `
+          <div class="card mb-3">
+            <div class="card-body">
+              <div class="row align-items-center">
+                <div class="col-3 col-md-2">
+                  <img src="${item.image || 'https://via.placeholder.com/300x300?text=Product'}" 
+                       class="cart-item-image w-100" 
+                       alt="${item.name}">
+                </div>
+                <div class="col-5 col-md-6">
+                  <h6 class="mb-1">${item.name}</h6>
+                  <p class="text-muted mb-0">ETB ${item.price} each</p>
+                  <p class="text-success mb-0 small">
+                    <i class="bi bi-check-circle me-1"></i> In Stock
+                  </p>
+                </div>
+                <div class="col-4 col-md-4">
+                  <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                      <button class="btn btn-outline-secondary quantity-btn" onclick="updateQuantity(${index}, -1)">-</button>
+                      <span class="mx-2">${item.quantity}</span>
+                      <button class="btn btn-outline-secondary quantity-btn" onclick="updateQuantity(${index}, 1)">+</button>
+                    </div>
+                    <div class="text-end">
+                      <h6 class="mb-0">ETB ${itemTotal}</h6>
+                      <button onclick="removeFromCart(${index})" class="btn btn-link text-danger btn-sm p-0">
+                        <i class="bi bi-trash"></i> Remove
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      
+      container.innerHTML = html;
+      
+      // Calculate totals
+      const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      updateOrderSummary(subtotal);
+    }
+    
+    function updateOrderSummary(subtotal) {
+      const shipping = subtotal >= 1000 ? 0 : 50;
+      const tax = subtotal * 0.15;
+      const total = subtotal + shipping + tax;
+      
+      document.getElementById('subtotal').textContent = `ETB ${subtotal}`;
+      document.getElementById('shipping').textContent = shipping === 0 ? 'FREE' : `ETB ${shipping}`;
+      document.getElementById('tax').textContent = `ETB ${tax.toFixed(2)}`;
+      document.getElementById('cart-total').textContent = `ETB ${total.toFixed(2)}`;
+      
+      if (shipping === 0) {
+        document.getElementById('shipping').className = 'text-success';
+      }
+    }
+    
+    function updateQuantity(index, change) {
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      
+      if (cart[index]) {
+        cart[index].quantity += change;
+        
+        if (cart[index].quantity <= 0) {
+          cart.splice(index, 1);
+          showAlert('Item removed from cart', 'info');
+        }
+        
+        localStorage.setItem('cart', JSON.stringify(cart));
+        loadCartItems();
+        updateCartCount();
+        
+        if (cart[index] && cart[index].quantity > 0) {
+          showAlert('Cart updated', 'success');
+        }
+      }
+    }
+    
+    function removeFromCart(index) {
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const itemName = cart[index].name;
+      cart.splice(index, 1);
+      localStorage.setItem('cart', JSON.stringify(cart));
+      loadCartItems();
+      updateCartCount();
+      showAlert(`"${itemName}" removed from cart`, 'info');
+    }
+    
+    function checkout() {
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const user = JSON.parse(localStorage.getItem('currentUser'));
+      
+      if (cart.length === 0) {
+        showAlert('Your cart is empty', 'warning');
+        return;
+      }
+      
+      // Validate delivery info
+      const name = document.getElementById('deliveryName').value;
+      const phone = document.getElementById('deliveryPhone').value;
+      const address = document.getElementById('deliveryAddress').value;
+      
+      if (!name || !phone || !address) {
+        showAlert('Please fill in all delivery information', 'warning');
+        return;
+      }
+      
+      if (!user) {
+        showAlert('Please login to checkout', 'warning');
+        window.location.href = 'login.html';
+        return;
+      }
+      
+      // Calculate totals
+      const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      const shipping = subtotal >= 1000 ? 0 : 50;
+      const tax = subtotal * 0.15;
+      const total = subtotal + shipping + tax;
+      
+      // Create order
+      const orderId = 'ORD' + Date.now().toString().slice(-6);
+      const orders = JSON.parse(localStorage.getItem('orders')) || [];
+      
+      const newOrder = {
+        id: orderId,
+        customerEmail: user.email,
+        customerName: name,
+        customerPhone: phone,
+        shippingAddress: address,
+        shippingCity: document.getElementById('deliveryCity').value,
+        items: JSON.parse(JSON.stringify(cart)), // Deep copy
+        subtotal: subtotal,
+        shipping: shipping,
+        tax: tax,
+        total: total,
+        date: new Date().toISOString(),
+        status: 'pending',
+        paymentMethod: 'cash_on_delivery'
+      };
+      
+      orders.push(newOrder);
+      localStorage.setItem('orders', JSON.stringify(orders));
+      
+      // Update product stock
+      const products = JSON.parse(localStorage.getItem('products'));
+      cart.forEach(cartItem => {
+        const product = products.find(p => p.id === cartItem.id);
+        if (product) {
+          product.stock -= cartItem.quantity;
+          if (product.stock < 0) product.stock = 0;
+        }
+      });
+      localStorage.setItem('products', JSON.stringify(products));
+      
+      // Add to recent activities
+      let activities = JSON.parse(localStorage.getItem('recentActivities')) || [];
+      activities.unshift({
+        id: Date.now(),
+        type: 'order_placed',
+        message: `Order ${orderId} placed by ${user.email} - Total: ETB ${total.toFixed(2)}`,
+        timestamp: new Date().toISOString()
+      });
+      localStorage.setItem('recentActivities', JSON.stringify(activities));
+      
+      // Clear cart
+      localStorage.setItem('cart', JSON.stringify([]));
+      
+      // Show success modal
+      const modalHTML = `
+        <div class="modal fade" id="orderSuccessModal" tabindex="-1">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header border-0">
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body text-center py-4">
+                <div class="mb-4">
+                  <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex p-4">
+                    <i class="bi bi-check-circle text-success display-4"></i>
+                  </div>
+                </div>
+                <h3 class="mb-3">Order Successful!</h3>
+                <p class="text-muted mb-4">
+                  Thank you for your order. Your order ID is <strong>${orderId}</strong>. 
+                  We'll contact you shortly for delivery details.
+                </p>
+                <div class="card bg-light mb-4">
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                      <span>Order Total:</span>
+                      <strong>ETB ${total.toFixed(2)}</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                      <span>Payment Method:</span>
+                      <span>Cash on Delivery</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                      <span>Delivery to:</span>
+                      <span>${address.substring(0, 20)}...</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="d-grid gap-2">
+                  <a href="orders.html" class="btn btn-primary">
+                    <i class="bi bi-receipt me-2"></i> View My Orders
+                  </a>
+                  <button class="btn btn-outline-dark" data-bs-dismiss="modal">
+                    <i class="bi bi-bag me-2"></i> Continue Shopping
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      document.body.insertAdjacentHTML('beforeend', modalHTML);
+      const modal = new bootstrap.Modal(document.getElementById('orderSuccessModal'));
+      modal.show();
+      
+      // Update UI
+      loadCartItems();
+      updateCartCount();
+      
+      // Remove modal after hiding
+      document.getElementById('orderSuccessModal').addEventListener('hidden.bs.modal', function() {
+        this.remove();
+        window.location.href = 'orders.html';
+      });
+    }
+    
+    function showAlert(message, type) {
+      const alertHTML = `
+        <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+          <div id="liveToast" class="toast align-items-center text-white bg-${type} border-0" role="alert">
+            <div class="d-flex">
+              <div class="toast-body">${message}</div>
+              <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      document.body.insertAdjacentHTML('beforeend', alertHTML);
+      const toastElement = document.getElementById('liveToast');
+      const toast = new bootstrap.Toast(toastElement, { delay: 3000 });
+      toast.show();
+      
+      toastElement.addEventListener('hidden.bs.toast', function() {
+        toastElement.remove();
+      });
+    }
+    
+    window.updateCartCount = function() {
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const cartCount = document.getElementById('cartCount');
+      if (cartCount) {
+        const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+        cartCount.textContent = totalItems;
+        cartCount.style.display = totalItems > 0 ? 'inline' : 'none';
+      }
+    };
+  </script>
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

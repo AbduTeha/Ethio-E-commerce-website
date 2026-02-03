@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Profile - EthioShop</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <script src="js/ui.js"></script>
+  
+  <div class="container mt-4">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-body text-center">
+            <div class="rounded-circle bg-primary text-white d-inline-flex p-4 mb-3">
+              <i class="bi bi-person display-4"></i>
+            </div>
+            <h4 id="profileName">Loading...</h4>
+            <p class="text-muted" id="profileEmail">Loading...</p>
+            <button class="btn btn-outline-primary w-100 mt-3" onclick="editProfile()">
+              <i class="bi bi-pencil me-2"></i> Edit Profile
+            </button>
+          </div>
+        </div>
+        
+        <div class="card mt-4">
+          <div class="card-body">
+            <h5>Account Info</h5>
+            <p><i class="bi bi-person-badge me-2"></i> Role: <span id="profileRole" class="badge bg-success">Loading...</span></p>
+            <p><i class="bi bi-calendar me-2"></i> Member since: <span id="profileRegistered">Loading...</span></p>
+            <p><i class="bi bi-clock-history me-2"></i> Last login: <span id="profileLastLogin">Loading...</span></p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-body">
+            <h4>My Profile</h4>
+            <p class="text-muted">Profile page coming soon with full functionality.</p>
+            <a href="index.html" class="btn btn-dark">
+              <i class="bi bi-arrow-left me-2"></i> Back to Shopping
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    
+    if (user) {
+      document.getElementById('profileName').textContent = user.name || 'User';
+      document.getElementById('profileEmail').textContent = user.email;
+      document.getElementById('profileRole').textContent = user.role;
+      document.getElementById('profileRegistered').textContent = user.registered || '2026';
+      document.getElementById('profileLastLogin').textContent = 
+        user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : 'Recently';
+    }
+  });
+  
+  function editProfile() {
+    alert('Profile editing coming soon!');
+  }
+  </script>
+</body>
+</html>
